@@ -6,21 +6,54 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons"; // Certifique-se de instalar a biblioteca react-native-vector-icons
+import Icon from "react-native-vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 1000);
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [senha, setSenha] = useState("");
 
-  const handleLogin = () => {
-    // Lógica para autenticação ou navegação para a próxima tela
+  const handleLogin = async () => {
     console.log("Email:", email);
-    console.log("Senha:", password);
+    console.log("Senha:", senha);
+
+    try {
+      const response = await fetch('https://6mvpsoj7gikhrtrk.vercel.app/alunos/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      const responseData = await response.json();
+      console.log("API Response Data:", responseData);
+
+      if (response.ok) {
+        const userData = responseData.aluno;
+        console.log("User Data:", userData);
+
+        navigation.navigate('TelaHome', {
+          id: userData.id,
+          nome: userData.nome,
+          pontos: userData.pontos,
+        });
+      } else {
+        console.log("Error Data:", responseData);
+        Alert.alert('Erro', responseData.message || 'Algo deu errado!');
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      Alert.alert('Erro', 'Algo deu errado!');
+    }
+  };
+
+  const handleForgotPassword = () => {
     navigation.navigate('TelaRecPassword');
   };
 
@@ -50,8 +83,8 @@ const LoginScreen = ({navigation}) => {
             placeholder="Senha"
             placeholderTextColor="#FFF"
             secureTextEntry
-            onChangeText={(text) => setPassword(text)}
-            value={password}
+            onChangeText={(text) => setSenha(text)}
+            value={senha}
           />
           <Icon name="lock-closed-outline" size={20} style={styles.icon} />
         </View>
@@ -61,7 +94,7 @@ const LoginScreen = ({navigation}) => {
         <TouchableOpacity style={styles.Button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.Button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.Button} onPress={handleForgotPassword}>
           <Text style={styles.buttonText}>Esqueci a senha</Text>
         </TouchableOpacity>
       </View>
@@ -91,7 +124,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#FFF",
     marginBottom: 10,
-    marginTop: 50
+    marginTop: 50,
   },
   input: {
     flex: 1,

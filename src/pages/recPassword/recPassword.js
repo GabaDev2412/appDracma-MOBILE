@@ -1,12 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import Icon from "react-native-vector-icons/Ionicons"; // Certifique-se de instalar a biblioteca react-native-vector-icons
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
@@ -14,25 +8,44 @@ setTimeout(SplashScreen.hideAsync, 3000);
 
 const RecPassword = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confPassword, setConfPassword] = useState('');
+  const [senha, setSenha] = useState("");
+  const [confSenha, setConfSenha] = useState('');
   const [mensagemErro, setMensagemErro] = useState('');
+  const [mensagemSucesso, setMensagemSucesso] = useState('');
 
-  const handleRecPassword = () => {
-    // Verifica se as senhas são iguais
-    if (password === confPassword) {
-      // Lógica para enviar e-mail de recuperação de senha
-      console.log(`Solicitar recuperação de senha para: ${email}`);
-      // Aqui você pode adicionar lógica para enviar um e-mail de recuperação
-      setMensagemErro('');
-    } else {
-      alert('As senhas não coincidem. Tente novamente.');
+  const handleRecPassword = async () => {
+    try {
+      if (senha === confSenha) {
+        const response = await fetch('https://6mvpsoj7gikhrtrk.vercel.app/alunos/change-password', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, novaSenha: senha, confirmarSenha: confSenha }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setMensagemSucesso('Senha alterada com sucesso!');
+          setMensagemErro('');
+        } else {
+          setMensagemErro(data.message || 'Erro ao alterar a senha. Tente novamente.');
+          setMensagemSucesso('');
+        }
+      } else {
+        setMensagemErro('As senhas não coincidem. Tente novamente.');
+        setMensagemSucesso('');
+      }
+    } catch (error) {
+      console.error('Erro ao processar solicitação:', error);
+      setMensagemErro('Erro ao processar solicitação. Tente novamente.');
+      setMensagemSucesso('');
     }
   };
 
   return (
     <View style={styles.container}>
-      
       <View style={styles.inputContainer}>
         <View style={styles.inputWrapper}>
           <TextInput
@@ -51,8 +64,8 @@ const RecPassword = () => {
             placeholder="Senha"
             placeholderTextColor="#FFF"
             secureTextEntry
-            onChangeText={(text) => setPassword(text)}
-            value={password}
+            onChangeText={(text) => setSenha(text)}
+            value={senha}
           />
           <Icon name="lock-closed-outline" size={20} style={styles.icon} />
         </View>
@@ -63,12 +76,24 @@ const RecPassword = () => {
             placeholder="Senha"
             placeholderTextColor="#FFF"
             secureTextEntry
-            onChangeText={(text) => setConfPassword(text)}
-            value={confPassword}
+            onChangeText={(text) => setConfSenha(text)}
+            value={confSenha}
           />
           <Icon name="lock-closed-outline" size={20} style={styles.icon} />
         </View>
       </View>
+
+      {mensagemSucesso ? (
+        <View style={styles.mensagemSucesso}>
+          <Text style={styles.mensagemSucessoText}>{mensagemSucesso}</Text>
+        </View>
+      ) : null}
+
+      {mensagemErro ? (
+        <View style={styles.mensagemErro}>
+          <Text style={styles.mensagemErroText}>{mensagemErro}</Text>
+        </View>
+      ) : null}
 
       <View style={styles.areaBtn}>
         <TouchableOpacity style={styles.Button} onPress={handleRecPassword}>
@@ -85,12 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#020202",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#FFF",
   },
   inputContainer: {
     width: "80%",
@@ -113,7 +132,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: "#FFF",
   },
-  areaBtn:{
+  areaBtn: {
     marginBottom: 300,
   },
   Button: {
@@ -128,6 +147,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     textAlign: "center"
+  },
+  mensagemSucesso: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  mensagemSucessoText: {
+    color: '#FFF',
+    textAlign: 'center',
+  },
+  mensagemErro: {
+    backgroundColor: '#FF5733',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  mensagemErroText: {
+    color: '#FFF',
+    textAlign: 'center',
   },
 });
 
