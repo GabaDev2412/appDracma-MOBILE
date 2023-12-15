@@ -42,6 +42,9 @@ const LoginScreen = ({ navigation }) => {
           id: userData.id,
           nome: userData.nome,
           pontos: userData.pontos,
+          comentario: userData.comentario,
+          livroComprado: userData.livroComprado,
+          valorLivro: userData.valorLivro,
         });
       } else {
         console.log("Error Data:", responseData);

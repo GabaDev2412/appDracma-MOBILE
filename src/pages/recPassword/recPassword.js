@@ -1,46 +1,60 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import * as SplashScreen from "expo-splash-screen";
 
-SplashScreen.preventAutoHideAsync();
-setTimeout(SplashScreen.hideAsync, 3000);
-
-const RecPassword = () => {
+const RecPassword = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [confSenha, setConfSenha] = useState('');
-  const [mensagemErro, setMensagemErro] = useState('');
-  const [mensagemSucesso, setMensagemSucesso] = useState('');
+  const [confSenha, setConfSenha] = useState("");
+  const [mensagemErro, setMensagemErro] = useState("");
+  const [mensagemSucesso, setMensagemSucesso] = useState("");
 
   const handleRecPassword = async () => {
     try {
       if (senha === confSenha) {
-        const response = await fetch('https://6mvpsoj7gikhrtrk.vercel.app/alunos/change-password', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, novaSenha: senha, confirmarSenha: confSenha }),
-        });
+        const response = await fetch(
+          "https://6mvpsoj7gikhrtrk.vercel.app/alunos/change-password",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              novaSenha: senha,
+              confirmarSenha: confSenha,
+            }),
+          }
+        );
 
         const data = await response.json();
 
         if (response.ok) {
-          setMensagemSucesso('Senha alterada com sucesso!');
-          setMensagemErro('');
+          setMensagemSucesso("Senha alterada com sucesso!");
+          setTimeout(() => {
+            navigation.navigate("TelaLogin");
+          }, 2000);
+          setMensagemErro("");
         } else {
-          setMensagemErro(data.message || 'Erro ao alterar a senha. Tente novamente.');
-          setMensagemSucesso('');
+          setMensagemErro(
+            data.message || "Erro ao alterar a senha. Tente novamente."
+          );
+          setMensagemSucesso("");
         }
       } else {
-        setMensagemErro('As senhas não coincidem. Tente novamente.');
-        setMensagemSucesso('');
+        setMensagemErro("As senhas não coincidem. Tente novamente.");
+        setMensagemSucesso("");
       }
     } catch (error) {
-      console.error('Erro ao processar solicitação:', error);
-      setMensagemErro('Erro ao processar solicitação. Tente novamente.');
-      setMensagemSucesso('');
+      console.error("Erro ao processar solicitação:", error);
+      setMensagemErro("Erro ao processar solicitação. Tente novamente.");
+      setMensagemSucesso("");
     }
   };
 
@@ -146,27 +160,27 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
-    textAlign: "center"
+    textAlign: "center",
   },
   mensagemSucesso: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
   },
   mensagemSucessoText: {
-    color: '#FFF',
-    textAlign: 'center',
+    color: "#FFF",
+    textAlign: "center",
   },
   mensagemErro: {
-    backgroundColor: '#FF5733',
+    backgroundColor: "#FF5733",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
   },
   mensagemErroText: {
-    color: '#FFF',
-    textAlign: 'center',
+    color: "#FFF",
+    textAlign: "center",
   },
 });
 

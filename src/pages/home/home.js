@@ -1,17 +1,76 @@
 // HomeScreen.js
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const HomeScreen = ({ route }) => {
-  const { id, nome, pontos } = route.params;
+  const { id, nome, comentario, livroComprado, valorLivro } = route?.params || {};
+  const [pontos, setPontos] = useState(0);
+  const [greeting, setGreeting] = useState(getGreeting());
+
+  useEffect(() => {
+    async function fetchPontosFromApi() {
+      try {
+        if (id) {
+          console.log("Comentario: ", comentario);
+          const response = await fetch(
+            `https://6mvpsoj7gikhrtrk.vercel.app/alunos/${id}`
+          );
+          const data = await response.json();
+          setPontos(data.pontos);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar pontos da API:", error);
+      }
+    }
+
+    fetchPontosFromApi();
+
+    const intervalId = setInterval(fetchPontosFromApi, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [id]);
+
+  function getGreeting() {
+    const now = new Date();
+    const hours = now.getHours();
+    if (hours >= 5 && hours < 12) {
+      return "Bom dia";
+    } else if (hours >= 12 && hours < 18) {
+      return "Boa tarde";
+    } else {
+      return "Boa noite";
+    }
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>DADOS DO ALUNO:</Text>
-      <View style={styles.data}>
-        <Text style={styles.text}>ID: {id}</Text>
-        <Text style={styles.text}>Nome: {nome}</Text>
-        <Text style={styles.text}>Pontos: {pontos}</Text>
+      <View style={styles.header}>
+        <View style={styles.headerTitle}>
+          <Icon name="person" size={24} color="white" />
+          <Text style={styles.headerTitleText}>
+            {getGreeting()}, {nome}
+          </Text>
+        </View>
+        <View style={styles.headerSubTitle}>
+          <Text style={styles.headerSubTitleText}>
+            Sua pontuação é:{" "}
+            <Text style={{ color: "red", fontSize: 23, fontWeight: "bold" }}>
+              {pontos}
+            </Text>
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.body}>
+        <View style={styles.areaExtratoTitle}>
+          <Text style={styles.areaExtratoTitleText}>Último Status</Text>
+        </View>
+        <View style={styles.areaExtrato}>
+          <Text>{comentario}</Text>
+          <Text>{livroComprado}</Text>
+          <Text>{valorLivro}</Text>
+        </View>
       </View>
     </View>
   );
@@ -20,23 +79,51 @@ const HomeScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#020202',
+    justifyContent: "center",
+    backgroundColor: "#020202",
     padding: 16,
   },
-  title: {
+  header: {
+    flex: 1,
+    justifyContent: "flex-start",
+  },
+  headerTitle: {
+    flexDirection: "row",
+  },
+  headerTitleText: {
     fontSize: 24,
-    color: '#fff',
-    marginBottom: 16,
+    color: "#FFF",
+    marginLeft: 15,
+    marginBottom: 10,
   },
-  data: {
-    alignItems: 'center',
+  headerSubTitleText: {
+    fontSize: 18,
+    color: "#FFF",
+    marginLeft: 40,
   },
-  text: {
-    color: '#fff',
-    marginBottom: 8,
-    fontSize: 16,
+  body: {
+    alignItems: "center",
+  },
+  areaExtratoTitle: {
+    backgroundColor: "#FFF",
+    width: 180,
+    height: 40,
+    borderRadius: 10,
+    padding: 4,
+  },
+  areaExtratoTitleText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  areaExtrato: {
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    marginTop: 15,
+    marginBottom: 100,
+    width: "95%",
+    height: 450,
+    padding: 16,
   },
 });
 
