@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.gabriel_2412.appDracma"
@@ -29,7 +29,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "2e6e718f-e61d-44bd-a7a3-5918a82e0c2f"
+        "projectId": "f151aa48-be23-4f73-9cc8-fdc64f6e0744"
       }
     }
   }

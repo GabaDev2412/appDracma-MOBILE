@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -15,40 +15,34 @@ const RecPassword = ({ navigation }) => {
   const [mensagemErro, setMensagemErro] = useState("");
   const [mensagemSucesso, setMensagemSucesso] = useState("");
 
+  const requestOptions = useMemo(() => ({
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      novaSenha: senha,
+      confirmarSenha: confSenha,
+    }),
+  }), [email, senha, confSenha]);
+
   const handleRecPassword = async () => {
     try {
-      if (senha === confSenha) {
-        const response = await fetch(
-          "https://6mvpsoj7gikhrtrk.vercel.app/alunos/change-password",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email,
-              novaSenha: senha,
-              confirmarSenha: confSenha,
-            }),
-          }
-        );
+      const response = await fetch(
+        "https://6mvpsoj7gikhrtrk.vercel.app/alunos/change-password",
+        requestOptions
+      );
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-          setMensagemSucesso("Senha alterada com sucesso!");
-          setTimeout(() => {
-            navigation.navigate("TelaLogin");
-          }, 2000);
-          setMensagemErro("");
-        } else {
-          setMensagemErro(
-            data.message || "Erro ao alterar a senha. Tente novamente."
-          );
-          setMensagemSucesso("");
-        }
+      if (response.ok) {
+        setMensagemSucesso("Senha alterada com sucesso!");
+        setMensagemErro("");
       } else {
-        setMensagemErro("As senhas não coincidem. Tente novamente.");
+        setMensagemErro(
+          data.message || "Erro ao alterar a senha. Tente novamente."
+        );
         setMensagemSucesso("");
       }
     } catch (error) {

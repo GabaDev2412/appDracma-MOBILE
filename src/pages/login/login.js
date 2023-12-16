@@ -9,10 +9,6 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import * as SplashScreen from "expo-splash-screen";
-
-SplashScreen.preventAutoHideAsync();
-setTimeout(SplashScreen.hideAsync, 1000);
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -26,6 +22,7 @@ const LoginScreen = ({ navigation }) => {
       const response = await fetch('https://6mvpsoj7gikhrtrk.vercel.app/alunos/login', {
         method: 'POST',
         headers: {
+          Accept: 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, senha }),
@@ -104,6 +101,7 @@ const LoginScreen = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
