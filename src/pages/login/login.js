@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   Alert,
+  ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -19,14 +20,17 @@ const LoginScreen = ({ navigation }) => {
     console.log("Senha:", senha);
 
     try {
-      const response = await fetch('https://6mvpsoj7gikhrtrk.vercel.app/alunos/login', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, senha }),
-      });
+      const response = await fetch(
+        "https://6mvpsoj7gikhrtrk.vercel.app/alunos/login",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, senha }),
+        }
+      );
 
       const responseData = await response.json();
       console.log("API Response Data:", responseData);
@@ -35,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
         const userData = responseData.aluno;
         console.log("User Data:", userData);
 
-        navigation.navigate('TelaHome', {
+        navigation.navigate("TelaHome", {
           id: userData.id,
           nome: userData.nome,
           pontos: userData.pontos,
@@ -45,63 +49,67 @@ const LoginScreen = ({ navigation }) => {
         });
       } else {
         console.log("Error Data:", responseData);
-        Alert.alert('Erro', responseData.message || 'Algo deu errado!');
+        Alert.alert("Erro", responseData.message || "Algo deu errado!");
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
-      Alert.alert('Erro', 'Algo deu errado!');
+      console.error("Erro na requisição:", error);
+      Alert.alert("Erro", "Algo deu errado!");
     }
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate('TelaRecPassword');
+    navigation.navigate("TelaRecPassword");
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/logo.png")}
-        style={{ height: 250, width: 250 }}
-      />
-      <Text style={styles.title}>Login</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Image
+          source={require("../../assets/logo.png")}
+          style={{ height: 250, width: 250 }}
+        />
+        <Text style={styles.title}>Login</Text>
 
-      <View style={styles.inputContainer}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder="E-mail"
-            placeholderTextColor="#FFF"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-          />
-          <Icon name="mail-outline" size={20} style={styles.icon} />
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="E-mail"
+              placeholderTextColor="#FFF"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+            />
+            <Icon name="mail-outline" size={20} style={styles.icon} />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              placeholderTextColor="#FFF"
+              secureTextEntry
+              onChangeText={(text) => setSenha(text)}
+              value={senha}
+            />
+            <Icon name="lock-closed-outline" size={20} style={styles.icon} />
+          </View>
         </View>
 
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            placeholderTextColor="#FFF"
-            secureTextEntry
-            onChangeText={(text) => setSenha(text)}
-            value={senha}
-          />
-          <Icon name="lock-closed-outline" size={20} style={styles.icon} />
+        <View style={styles.areaBtn}>
+          <TouchableOpacity style={styles.Button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Entrar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.Button}
+            onPress={handleForgotPassword}
+          >
+            <Text style={styles.buttonText}>Esqueci a senha</Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.areaBtn}>
-        <TouchableOpacity style={styles.Button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.Button} onPress={handleForgotPassword}>
-          <Text style={styles.buttonText}>Esqueci a senha</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

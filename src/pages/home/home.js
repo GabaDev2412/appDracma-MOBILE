@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const HomeScreen = ({ route }) => {
@@ -43,7 +44,8 @@ const HomeScreen = ({ route }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView>
+      <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerTitle}>
           <Icon name="person" size={24} color="white" />
@@ -97,6 +99,7 @@ const HomeScreen = ({ route }) => {
         </View>
       </View>
     </View>
+    </ScrollView>
   );
 };
 
@@ -127,6 +130,7 @@ const styles = StyleSheet.create({
   },
   body: {
     alignItems: "center",
+    paddingTop: 50,
   },
   areaExtratoTitle: {
     backgroundColor: "#FFF",

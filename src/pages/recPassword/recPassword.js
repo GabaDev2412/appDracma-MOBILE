@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const RecPassword = ({ navigation }) => {
@@ -15,17 +16,20 @@ const RecPassword = ({ navigation }) => {
   const [mensagemErro, setMensagemErro] = useState("");
   const [mensagemSucesso, setMensagemSucesso] = useState("");
 
-  const requestOptions = useMemo(() => ({
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      novaSenha: senha,
-      confirmarSenha: confSenha,
+  const requestOptions = useMemo(
+    () => ({
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        novaSenha: senha,
+        confirmarSenha: confSenha,
+      }),
     }),
-  }), [email, senha, confSenha]);
+    [email, senha, confSenha]
+  );
 
   const handleRecPassword = async () => {
     try {
@@ -53,62 +57,64 @@ const RecPassword = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder="E-mail"
-            placeholderTextColor="#FFF"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-          />
-          <Icon name="mail-outline" size={20} style={styles.icon} />
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="E-mail"
+              placeholderTextColor="#FFF"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+            />
+            <Icon name="mail-outline" size={20} style={styles.icon} />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              placeholderTextColor="#FFF"
+              secureTextEntry
+              onChangeText={(text) => setSenha(text)}
+              value={senha}
+            />
+            <Icon name="lock-closed-outline" size={20} style={styles.icon} />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              placeholderTextColor="#FFF"
+              secureTextEntry
+              onChangeText={(text) => setConfSenha(text)}
+              value={confSenha}
+            />
+            <Icon name="lock-closed-outline" size={20} style={styles.icon} />
+          </View>
         </View>
 
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            placeholderTextColor="#FFF"
-            secureTextEntry
-            onChangeText={(text) => setSenha(text)}
-            value={senha}
-          />
-          <Icon name="lock-closed-outline" size={20} style={styles.icon} />
-        </View>
+        {mensagemSucesso ? (
+          <View style={styles.mensagemSucesso}>
+            <Text style={styles.mensagemSucessoText}>{mensagemSucesso}</Text>
+          </View>
+        ) : null}
 
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            placeholderTextColor="#FFF"
-            secureTextEntry
-            onChangeText={(text) => setConfSenha(text)}
-            value={confSenha}
-          />
-          <Icon name="lock-closed-outline" size={20} style={styles.icon} />
+        {mensagemErro ? (
+          <View style={styles.mensagemErro}>
+            <Text style={styles.mensagemErroText}>{mensagemErro}</Text>
+          </View>
+        ) : null}
+
+        <View style={styles.areaBtn}>
+          <TouchableOpacity style={styles.Button} onPress={handleRecPassword}>
+            <Text style={styles.buttonText}>Alterar Senha</Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-      {mensagemSucesso ? (
-        <View style={styles.mensagemSucesso}>
-          <Text style={styles.mensagemSucessoText}>{mensagemSucesso}</Text>
-        </View>
-      ) : null}
-
-      {mensagemErro ? (
-        <View style={styles.mensagemErro}>
-          <Text style={styles.mensagemErroText}>{mensagemErro}</Text>
-        </View>
-      ) : null}
-
-      <View style={styles.areaBtn}>
-        <TouchableOpacity style={styles.Button} onPress={handleRecPassword}>
-          <Text style={styles.buttonText}>Alterar Senha</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
